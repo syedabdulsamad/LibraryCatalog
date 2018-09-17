@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "149601414824",
+    "firebase_url": "https://librarycatalog-5a7a0.firebaseio.com",
+    "project_id": "librarycatalog-5a7a0",
+    "storage_bucket": "librarycatalog-5a7a0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:149601414824:android:a2f92ce28eb13e1d",
+        "android_client_info": {
+          "package_name": "com.example.abdulsamad.librarycatalog"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "149601414824-rhusagk4u94hff5ruct6e1qva20vbrbc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgvJ_5SeS0EMQR5n4RrX_odvexhnlM7Iw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
