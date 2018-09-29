@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -61,7 +62,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         setUIElements();
         setOnClickListener();
-
     }
 
 
@@ -87,7 +87,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     private void registerUser() {
-
+        dismissKeyBoard();
         firstName = firstNameTextField.getText().toString();
         lastName = lastNameTextField.getText().toString();
         email = emailTextField.getText().toString();
@@ -153,6 +153,7 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onSuccess(Void aVoid) {
                         Log.d(RegisterActivityTag, "USER CREATED");
                         Toast.makeText(getApplicationContext(), "User created.", LENGTH_SHORT).show();
+                        sendVerificationEmail();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -180,5 +181,28 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void sendVerificationEmail() {
+        if (firebaseUser.isEmailVerified() == false) {
+            firebaseUser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(getApplicationContext(), "Verification email sent to " + email, LENGTH_SHORT).show();
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(), "Verification email not sent", LENGTH_SHORT).show();
+
+                }
+            });
+        }
+    }
+
+    private void dismissKeyBoard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(registerButton.getWindowToken(), 0);
     }
 }

@@ -94,8 +94,7 @@ public class Login extends AppCompatActivity {
     }
 
     private void forgotPassword() {
+        // Implement forgot password logic
 
     }
-
-
 }
