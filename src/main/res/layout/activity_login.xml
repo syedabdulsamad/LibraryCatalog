@@ -55,7 +55,7 @@ tools:context=".Login">
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/emailTextView"
+                android:id="@+id/login_emailTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="20sp"
@@ -63,10 +63,10 @@ tools:context=".Login">
 
 
             <EditText
-                android:id="@+id/passwordTextView"
+                android:id="@+id/login_passwordTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/emailTextView"
+                android:layout_below="@id/login_emailTextView"
                 android:layout_marginRight="20sp"
                 android:inputType="textPassword" />
         </RelativeLayout>

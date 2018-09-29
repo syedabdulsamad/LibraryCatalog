@@ -28,7 +28,10 @@ import Model.User;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
+
 public class RegisterActivity extends AppCompatActivity {
+
+    private final String RegisterActivityTag = this.getClass().getSimpleName();
 
     private FirebaseAuth auth;
     private DatabaseReference databaseRef;
@@ -96,15 +99,16 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    Log.d("USER", "Task Successful");
+                    Log.d(RegisterActivityTag, "Task Successful");
                     if (auth.getCurrentUser() != null) {
+                        firebaseUser = auth.getCurrentUser();
                         checkExistingUser();
                     } else {
-                        Log.d("USER", "No current user.");
+                        Log.d(RegisterActivityTag, "No current user.");
                     }
                 } else {
 
-                    Log.d("USER", "ELSE " + task.getException().getMessage());
+                    Log.d(RegisterActivityTag, "ELSE " + task.getException().getMessage());
                 }
             }
         });
@@ -119,17 +123,15 @@ public class RegisterActivity extends AppCompatActivity {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("USER", dataSnapshot.getKey());
-                Log.d("USER", dataSnapshot.toString());
-                Log.d("USER", dataSnapshot.getChildren().toString());
-
-
+                Log.d(RegisterActivityTag, dataSnapshot.getKey());
+                Log.d(RegisterActivityTag, dataSnapshot.toString());
                 if (dataSnapshot.getValue() != null) {
-                    Log.d("USER", "Snapshot value is not null");
+                    Log.d(RegisterActivityTag, "Snapshot value is not null");
+                    deleteUsers();
 
                     Toast.makeText(getApplicationContext(), "User already exists.", LENGTH_SHORT).show();
                 } else {
-                    Log.d("USER", "Snapshot value is NULL");
+                    Log.d(RegisterActivityTag, "Snapshot value is NULL");
                     Toast.makeText(getApplicationContext(), "User does not exists.", LENGTH_SHORT).show();
                     setupUser();
                 }
@@ -149,15 +151,34 @@ public class RegisterActivity extends AppCompatActivity {
                 addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d("USER", "USER CREATED");
+                        Log.d(RegisterActivityTag, "USER CREATED");
                         Toast.makeText(getApplicationContext(), "User created.", LENGTH_SHORT).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.d("USER", "USER FAILED");
+                Log.d(RegisterActivityTag, "USER FAILED");
                 Toast.makeText(getApplicationContext(), "User setting failed", LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void deleteUsers() {
+        firebaseUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Log.d(RegisterActivityTag, "user deleted");
+                    firebaseUser = null;
+                    FirebaseUser user = auth.getCurrentUser();
+                    Toast.makeText(getApplicationContext(), "User creation failed. \n AIMS id already exists.",
+                            LENGTH_SHORT).show();
+                } else {
+                    Log.d(RegisterActivityTag, "User not deleted");
+                }
+
+            }
+        });
+
     }
 }
