@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import Model.User;
 
+import static android.view.View.VISIBLE;
 import static android.widget.Toast.LENGTH_SHORT;
 
 
@@ -43,6 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText emailTextField = null;
     private EditText passwordTextField = null;
     private EditText aimsIdTextField = null;
+    private ProgressBar progressBar = null;
 
     private String firstName = null;
     private String lastName = null;
@@ -73,6 +76,8 @@ public class RegisterActivity extends AppCompatActivity {
         passwordTextField = (EditText) findViewById(R.id.passwordTextField);
         aimsIdTextField = (EditText) findViewById(R.id.aimsIdTextField);
         registerButton = (Button) findViewById(R.id.registerButton);
+        progressBar = (ProgressBar) findViewById(R.id.register_progressBar);
+
     }
 
     private void setOnClickListener() {
@@ -93,7 +98,7 @@ public class RegisterActivity extends AppCompatActivity {
         email = emailTextField.getText().toString();
         aimsId = aimsIdTextField.getText().toString();
         password = passwordTextField.getText().toString();
-
+        progressBar.setVisibility(View.VISIBLE);
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
 
             @Override
@@ -104,10 +109,11 @@ public class RegisterActivity extends AppCompatActivity {
                         firebaseUser = auth.getCurrentUser();
                         checkExistingUser();
                     } else {
+                        progressBar.setVisibility(View.INVISIBLE);
                         Log.d(RegisterActivityTag, "No current user.");
                     }
                 } else {
-
+                    progressBar.setVisibility(View.INVISIBLE);
                     Log.d(RegisterActivityTag, "ELSE " + task.getException().getMessage());
                 }
             }
@@ -154,10 +160,12 @@ public class RegisterActivity extends AppCompatActivity {
                         Log.d(RegisterActivityTag, "USER CREATED");
                         Toast.makeText(getApplicationContext(), "User created.", LENGTH_SHORT).show();
                         sendVerificationEmail();
+
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                progressBar.setVisibility(View.INVISIBLE);
                 Log.d(RegisterActivityTag, "USER FAILED");
                 Toast.makeText(getApplicationContext(), "User setting failed", LENGTH_SHORT).show();
             }
@@ -174,7 +182,9 @@ public class RegisterActivity extends AppCompatActivity {
                     FirebaseUser user = auth.getCurrentUser();
                     Toast.makeText(getApplicationContext(), "User creation failed. \n AIMS id already exists.",
                             LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.INVISIBLE);
                 } else {
+                    progressBar.setVisibility(View.INVISIBLE);
                     Log.d(RegisterActivityTag, "User not deleted");
                 }
 
@@ -189,13 +199,14 @@ public class RegisterActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Toast.makeText(getApplicationContext(), "Verification email sent to " + email, LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.INVISIBLE);
 
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Toast.makeText(getApplicationContext(), "Verification email not sent", LENGTH_SHORT).show();
-
+                    progressBar.setVisibility(View.INVISIBLE);
                 }
             });
         }

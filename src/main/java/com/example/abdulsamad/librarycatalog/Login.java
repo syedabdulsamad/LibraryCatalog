@@ -10,8 +10,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -71,19 +71,34 @@ public class Login extends AppCompatActivity {
         String email = emailTextField.getText().toString();
         String password = passwordTextField.getText().toString();
         if (email.length() != 0 && password.length() != 0) {
-            auth.signInWithEmailAndPassword(email, password).
-                    addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            FirebaseUser user = task.getResult().getUser();
-                            if (task.isSuccessful() && user != null) {
-                                currentUser = user;
-                                Toast.makeText(getApplicationContext(), "User logged in successfully", LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+            auth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                @Override
+                public void onSuccess(AuthResult authResult) {
+                    FirebaseUser user = authResult.getUser();
+                    if (user != null && user.isEmailVerified()) {
+                        currentUser = user;
+                        Toast.makeText(getApplicationContext(), "User logged in successfully", LENGTH_SHORT).show();
+                        loadHomePage();
+                    } else if (user.isEmailVerified() == false) {
+                        Toast.makeText(getApplicationContext(), "Email not verified", LENGTH_SHORT).show();
+                    }
 
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(), "Login failed.\n " + e.getMessage(), LENGTH_SHORT).show();
+                }
+            });
         }
+
+
+    }
+
+    private void loadHomePage() {
+        Intent intent = new Intent(this, HomePageActivity.class);
+        intent.putExtra("user", currentUser);
+        startActivity(intent);
 
 
     }
